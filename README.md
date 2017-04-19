@@ -28,6 +28,19 @@ Currently it shows:
 
 ### Installing plugin
 
+#### For oh-my-zsh users
+
+Clone the repo in your plugins directory:
+
+* `$ cd ${ZSH_CUSTOM1:-$ZSH/custom}/plugins`
+* `$ git clone https://github.com/iam4x/zsh-iterm-touchbar.git`
+
+Then add the plugin into your `~/.zshr`:
+
+```
+plugins=(... zsh-iterm-touchbar)
+```
+
 #### For antigen users
 
 Add the following snippet `~/.zshrc` after the line antigen use oh-my-zsh:
