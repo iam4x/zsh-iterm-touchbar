@@ -1,4 +1,4 @@
-update_touchbar() {
+pre_cmd() {
   # Reset Touchbar
   echo -ne "\033]1337;PopKeyLabels\a"
 
@@ -34,4 +34,3 @@ update_touchbar() {
   fi
 }
 
-PS1+='$(update_touchbar)'
