@@ -57,6 +57,20 @@ Add the following line to your `~/.zshrc` where you're adding your other zsh plu
 zgen load iam4x/zsh-iterm-touchbar
 ```
 
-### Read more
+### Customize
 
-https://gitlab.com/gnachman/iterm2/issues/5281
+ENV variables for git icons:
+
+```shell
+GIT_UNCOMMITTED="+"
+GIT_UNSTAGED="!"
+GIT_UNTRACKED="?"
+GIT_STASHED="$"
+GIT_UNPULLED="⇣"
+GIT_UNPUSHED="⇡"
+```
+
+### Read more / Credits
+
+* [Original iTerm2 issue for TouchBar support](https://gitlab.com/gnachman/iterm2/issues/5281)
+* [Thank's to spaceship-zsh-theme for git functions](https://github.com/denysdovhan/spaceship-zsh-theme/blob/9dbaee2cc6cfe0ac407cf901ebb97894ed279660/spaceship.zsh#L143-L173)
