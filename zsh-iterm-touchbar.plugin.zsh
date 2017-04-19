@@ -1,4 +1,5 @@
-pre_cmd() {
+precmd() {
+  autoload -Uz vcs_info
   # Reset Touchbar
   echo -ne "\033]1337;PopKeyLabels\a"
 
@@ -8,7 +9,6 @@ pre_cmd() {
 
   # GIT
   # ---
-  # Check if the current directory is in a Git repository.
   # Check if the current directory is in a Git repository.
   command git rev-parse --is-inside-work-tree &>/dev/null || return
 
