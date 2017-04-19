@@ -2,6 +2,9 @@
 
 > Display feedback of terminal in the 🍏 Touchbar
 
+![preview1](./preview1.png)
+![preview2](./preview2.png)
+
 Currently it shows:
 
   * Current directory (F1) 👉
