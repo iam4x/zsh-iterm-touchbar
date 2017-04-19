@@ -2,7 +2,7 @@
 
 > Display feedback of terminal in the 🍏 Touchbar
 
-![preview1](./preview1.png)
+![preview1](./preview1.jpg)
 ![preview2](./preview2.png)
 
 Currently it shows:
