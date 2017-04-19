@@ -6,6 +6,18 @@ GIT_STASHED="${GIT_STASHED:-$}"
 GIT_UNPULLED="${GIT_UNPULLED:-⇣}"
 GIT_UNPUSHED="${GIT_UNPUSHED:-⇡}"
 
+# Output name of current branch.
+git_current_branch() {
+  local ref
+  ref=$(command git symbolic-ref --quiet HEAD 2> /dev/null)
+  local ret=$?
+  if [[ $ret != 0 ]]; then
+    [[ $ret == 128 ]] && return  # no git repo.
+    ref=$(command git rev-parse --short HEAD 2> /dev/null) || return
+  fi
+  echo ${ref#refs/heads/}
+}
+
 # Uncommitted changes.
 # Check for uncommitted changes in the index.
 git_uncomitted() {
