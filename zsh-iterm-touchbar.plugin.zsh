@@ -1,4 +1,4 @@
-pre_cmd() {
+precmd() {
   # Reset Touchbar
   echo -ne "\033]1337;PopKeyLabels\a"
 
@@ -8,7 +8,6 @@ pre_cmd() {
 
   # GIT
   # ---
-  # Check if the current directory is in a Git repository.
   # Check if the current directory is in a Git repository.
   command git rev-parse --is-inside-work-tree &>/dev/null || return
 
@@ -33,4 +32,3 @@ pre_cmd() {
     echo -ne "\033]1337;SetKeyLabel=F3=$touchbarIndicators\a"
   fi
 }
-
