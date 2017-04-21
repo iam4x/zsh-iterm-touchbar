@@ -35,7 +35,7 @@ Clone the repo in your plugins directory:
 * `$ cd ${ZSH_CUSTOM1:-$ZSH/custom}/plugins`
 * `$ git clone https://github.com/iam4x/zsh-iterm-touchbar.git`
 
-Then add the plugin into your `~/.zshr`:
+Then add the plugin into your `~/.zshrc`:
 
 ```
 plugins=(... zsh-iterm-touchbar)
