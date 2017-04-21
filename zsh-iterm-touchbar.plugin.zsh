@@ -75,6 +75,10 @@ precmd() {
   # Reset Touchbar
   echo -ne "\033]1337;PopKeyLabels\a"
 
+  # unbind F2 / F3
+  bindkey -s '^[OQ' ''
+  bindkey -s '^[OR' ''
+
   # CURRENT_DIR
   # -----------
   echo -ne "\033]1337;SetKeyLabel=F1=👉 $(echo $(pwd) | awk -F/ '{print $(NF-1)"/"$(NF)}')\a"
@@ -103,5 +107,13 @@ precmd() {
 
     echo -ne "\033]1337;SetKeyLabel=F2=🎋 $(git_current_branch)\a"
     echo -ne "\033]1337;SetKeyLabel=F3=$touchbarIndicators\a"
+
+    # bind git actions
+    bindkey -s '^[OQ' 'git branch -a \n'
+    bindkey -s '^[OR' 'git status \n'
   fi
 }
+
+# F1-12: https://github.com/vmalloc/zsh-config/blob/master/extras/function_keys.zsh
+# print pwd on F1
+bindkey -s '^[OP' 'pwd \n'
