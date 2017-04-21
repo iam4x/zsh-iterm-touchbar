@@ -78,6 +78,7 @@ precmd() {
   # unbind F2 / F3
   bindkey -s '^[OQ' ''
   bindkey -s '^[OR' ''
+  bindkey -s '^[OS' ''
 
   # CURRENT_DIR
   # -----------
@@ -107,11 +108,13 @@ precmd() {
 
     echo -ne "\033]1337;SetKeyLabel=F2=🎋 $(git_current_branch)\a"
     echo -ne "\033]1337;SetKeyLabel=F3=$touchbarIndicators\a"
+    echo -ne "\033]1337;SetKeyLabel=F4=✉️ push\a";
 
     # bind git actions
     bindkey -s '^[OQ' 'git branch -a \n'
     bindkey -s '^[OR' 'git status \n'
-  fi
+    bindkey -s '^[OS' "git push origin $(git_current_branch) \n"
+   fi
 }
 
 # F1-12: https://github.com/vmalloc/zsh-config/blob/master/extras/function_keys.zsh
