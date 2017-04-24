@@ -71,18 +71,32 @@ git_unpushed_unpulled() {
   [ -n $arrows ] && echo -n "${arrows}"
 }
 
-precmd() {
-  # Reset Touchbar
-  echo -ne "\033]1337;PopKeyLabels\a"
+# F1-12: https://github.com/vmalloc/zsh-config/blob/master/extras/function_keys.zsh
+fnKeys=('^[OP' '^[OQ' '^[OR' '^[OS' '^[[15~' '^[[17~' '^[[18~' '^[[19~' '^[[20~' '^[[21~' '^[[23~' '^[[24~')
+touchBarState=''
+npmScripts=()
+lastPackageJsonPath=''
 
-  # unbind F2 / F3
-  bindkey -s '^[OQ' ''
-  bindkey -s '^[OR' ''
-  bindkey -s '^[OS' ''
+function _clearTouchbar() {
+  echo -ne "\033]1337;PopKeyLabels\a"
+}
+
+function _unbindTouchbar() {
+  for fnKey in "$fnKeys[@]"; do
+    bindkey -s "$fnKey" ''
+  done
+}
+
+function _displayDefault() {
+  _clearTouchbar
+  _unbindTouchbar
+
+  touchBarState=''
 
   # CURRENT_DIR
   # -----------
   echo -ne "\033]1337;SetKeyLabel=F1=👉 $(echo $(pwd) | awk -F/ '{print $(NF-1)"/"$(NF)}')\a"
+  bindkey -s '^[OP' 'pwd \n'
 
   # GIT
   # ---
@@ -114,9 +128,46 @@ precmd() {
     bindkey -s '^[OQ' 'git branch -a \n'
     bindkey -s '^[OR' 'git status \n'
     bindkey -s '^[OS' "git push origin $(git_current_branch) \n"
-   fi
+  fi
+
+  # PACKAGE.JSON
+  # ------------
+  if [[ -f package.json ]]; then
+    echo -ne "\033]1337;SetKeyLabel=F5=⚡️ npm-run\a"
+    bindkey "${fnKeys[5]}" _displayNpmScripts
+  fi
 }
 
-# F1-12: https://github.com/vmalloc/zsh-config/blob/master/extras/function_keys.zsh
-# print pwd on F1
-bindkey -s '^[OP' 'pwd \n'
+function _displayNpmScripts() {
+  # find available npm run scripts only if new directory
+  if [[ $lastPackageJsonPath != $(echo "$(pwd)/package.json") ]]; then
+    lastPackageJsonPath=$(echo "$(pwd)/package.json")
+    npmScripts=($(node -e "console.log(Object.keys($(npm run --json)).filter(name => !name.includes(':')).sort((a, b) => a.localeCompare(b)).filter((name, idx) => idx < 12).join(' '))"))
+  fi
+
+  _clearTouchbar
+  _unbindTouchbar
+
+  touchBarState='npm'
+
+  fnKeysIndex=1
+  for npmScript in "$npmScripts[@]"; do
+    fnKeysIndex=$((fnKeysIndex + 1))
+    bindkey -s $fnKeys[$fnKeysIndex] "npm run $npmScript \n"
+    echo -ne "\033]1337;SetKeyLabel=F$fnKeysIndex=$npmScript\a"
+  done
+
+  echo -ne "\033]1337;SetKeyLabel=F1=👈 back\a"
+  bindkey "${fnKeys[1]}" _displayDefault
+}
+
+zle -N _displayDefault
+zle -N _displayNpmScripts
+
+precmd() {
+  if [[ $touchBarState == 'npm' ]]; then
+    _displayNpmScripts
+  else
+    _displayDefault
+  fi
+}
