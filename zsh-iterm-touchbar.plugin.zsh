@@ -164,10 +164,13 @@ function _displayNpmScripts() {
 zle -N _displayDefault
 zle -N _displayNpmScripts
 
-precmd() {
+precmd_iterm_touchbar() {
   if [[ $touchBarState == 'npm' ]]; then
     _displayNpmScripts
   else
     _displayDefault
   fi
 }
+
+autoload -Uz add-zsh-hook
+add-zsh-hook precmd precmd_iterm_touchbar
