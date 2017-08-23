@@ -71,6 +71,15 @@ git_unpushed_unpulled() {
   [ -n $arrows ] && echo -n "${arrows}"
 }
 
+pecho() {
+  if [ -n "$TMUX" ]
+  then
+    echo -ne "\ePtmux;\e$*\e\\"
+  else
+    echo -ne $*
+  fi
+}
+
 # F1-12: https://github.com/vmalloc/zsh-config/blob/master/extras/function_keys.zsh
 fnKeys=('^[OP' '^[OQ' '^[OR' '^[OS' '^[[15~' '^[[17~' '^[[18~' '^[[19~' '^[[20~' '^[[21~' '^[[23~' '^[[24~')
 touchBarState=''
@@ -78,7 +87,7 @@ npmScripts=()
 lastPackageJsonPath=''
 
 function _clearTouchbar() {
-  echo -ne "\033]1337;PopKeyLabels\a"
+  pecho "\033]1337;PopKeyLabels\a"
 }
 
 function _unbindTouchbar() {
@@ -95,7 +104,7 @@ function _displayDefault() {
 
   # CURRENT_DIR
   # -----------
-  echo -ne "\033]1337;SetKeyLabel=F1=👉 $(echo $(pwd) | awk -F/ '{print $(NF-1)"/"$(NF)}')\a"
+  pecho "\033]1337;SetKeyLabel=F1=👉 $(echo $(pwd) | awk -F/ '{print $(NF-1)"/"$(NF)}')\a"
   bindkey -s '^[OP' 'pwd \n'
 
   # GIT
@@ -120,9 +129,9 @@ function _displayDefault() {
 
     [ -n "${indicators}" ] && touchbarIndicators="🔥[${indicators}]" || touchbarIndicators="🙌";
 
-    echo -ne "\033]1337;SetKeyLabel=F2=🎋 $(git_current_branch)\a"
-    echo -ne "\033]1337;SetKeyLabel=F3=$touchbarIndicators\a"
-    echo -ne "\033]1337;SetKeyLabel=F4=✉️ push\a";
+    pecho "\033]1337;SetKeyLabel=F2=🎋 $(git_current_branch)\a"
+    pecho "\033]1337;SetKeyLabel=F3=$touchbarIndicators\a"
+    pecho "\033]1337;SetKeyLabel=F4=✉️ push\a";
 
     # bind git actions
     bindkey -s '^[OQ' 'git branch -a \n'
@@ -133,7 +142,7 @@ function _displayDefault() {
   # PACKAGE.JSON
   # ------------
   if [[ -f package.json ]]; then
-    echo -ne "\033]1337;SetKeyLabel=F5=⚡️ npm-run\a"
+    pecho "\033]1337;SetKeyLabel=F5=⚡️ npm-run\a"
     bindkey "${fnKeys[5]}" _displayNpmScripts
   fi
 }
@@ -154,10 +163,10 @@ function _displayNpmScripts() {
   for npmScript in "$npmScripts[@]"; do
     fnKeysIndex=$((fnKeysIndex + 1))
     bindkey -s $fnKeys[$fnKeysIndex] "npm run $npmScript \n"
-    echo -ne "\033]1337;SetKeyLabel=F$fnKeysIndex=$npmScript\a"
+    pecho "\033]1337;SetKeyLabel=F$fnKeysIndex=$npmScript\a"
   done
 
-  echo -ne "\033]1337;SetKeyLabel=F1=👈 back\a"
+  pecho "\033]1337;SetKeyLabel=F1=👈 back\a"
   bindkey "${fnKeys[1]}" _displayDefault
 }
 
@@ -174,3 +183,4 @@ precmd_iterm_touchbar() {
 
 autoload -Uz add-zsh-hook
 add-zsh-hook precmd precmd_iterm_touchbar
+
