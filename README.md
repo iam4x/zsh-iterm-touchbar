@@ -9,7 +9,7 @@
 Currently it shows:
 
   * F1 - Current directory 👉
-  * F2 - Current git branch 🎋
+  * F2 - Current git branch, press to display all branches and switch between them 🎋
   * F3 - Current git repo status 🔥 / 🙌
     * `+` — uncommitted changes in the index;
     * `!` — unstaged changes;

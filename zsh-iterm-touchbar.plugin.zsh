@@ -84,6 +84,7 @@ pecho() {
 fnKeys=('^[OP' '^[OQ' '^[OR' '^[OS' '^[[15~' '^[[17~' '^[[18~' '^[[19~' '^[[20~' '^[[21~' '^[[23~' '^[[24~')
 touchBarState=''
 npmScripts=()
+gitBranches=()
 lastPackageJsonPath=''
 
 function _clearTouchbar() {
@@ -134,7 +135,7 @@ function _displayDefault() {
     pecho "\033]1337;SetKeyLabel=F4=✉️ push\a";
 
     # bind git actions
-    bindkey -s '^[OQ' 'git branch -a \n'
+    bindkey '^[OQ' _displayBranches
     bindkey -s '^[OR' 'git status \n'
     bindkey -s '^[OS' "git push origin $(git_current_branch) \n"
   fi
@@ -170,12 +171,37 @@ function _displayNpmScripts() {
   bindkey "${fnKeys[1]}" _displayDefault
 }
 
+function _displayBranches() {
+  # List of branches for current repo
+  gitBranches=($(node -e "console.log('$(echo $(git branch))'.split(/[ ,]+/).toString().split(',').join(' ').toString().replace('* ', ''))"))
+
+  _clearTouchbar
+  _unbindTouchbar
+
+  # change to github state
+  touchBarState='github'
+
+  fnKeysIndex=1
+  # for each branch name, bind it to a key
+  for branch in "$gitBranches[@]"; do
+    fnKeysIndex=$((fnKeysIndex + 1))
+    bindkey -s $fnKeys[$fnKeysIndex] "git checkout $branch \n"
+    pecho "\033]1337;SetKeyLabel=F$fnKeysIndex=$branch\a"
+  done
+
+  pecho "\033]1337;SetKeyLabel=F1=👈 back\a"
+  bindkey "${fnKeys[1]}" _displayDefault
+}
+
 zle -N _displayDefault
 zle -N _displayNpmScripts
+zle -N _displayBranches
 
 precmd_iterm_touchbar() {
   if [[ $touchBarState == 'npm' ]]; then
     _displayNpmScripts
+  elif [[ $touchBarState == 'github' ]]; then
+    _displayBranches
   else
     _displayDefault
   fi
@@ -183,4 +209,3 @@ precmd_iterm_touchbar() {
 
 autoload -Uz add-zsh-hook
 add-zsh-hook precmd precmd_iterm_touchbar
-
