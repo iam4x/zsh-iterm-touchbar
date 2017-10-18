@@ -18,7 +18,7 @@ Currently it shows:
     * `⇣` — unpulled commits;
     * `⇡` — unpushed commits.
   * F4 - Push to origin branch (git push origin [branch]) ✉️
-  * F5 - Display `npm-run` scripts from `package.json` ⚡️
+  * F5 - Display `npm-run` or `yarn-run` scripts from `package.json` ⚡️ /🐱
 
 ### Requirements
 
