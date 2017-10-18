@@ -143,8 +143,13 @@ function _displayDefault() {
   # PACKAGE.JSON
   # ------------
   if [[ -f package.json ]]; then
-    pecho "\033]1337;SetKeyLabel=F5=⚡️ npm-run\a"
-    bindkey "${fnKeys[5]}" _displayNpmScripts
+      if [[ -f yarn.lock ]]; then
+          pecho "\033]1337;SetKeyLabel=F5=🐱 yarn-run\a"
+          bindkey "${fnKeys[5]}" _displayNpmScripts
+      else
+          pecho "\033]1337;SetKeyLabel=F5=⚡️ npm-run\a"
+          bindkey "${fnKeys[5]}" _displayNpmScripts
+    fi
   fi
 }
 
@@ -165,6 +170,29 @@ function _displayNpmScripts() {
     fnKeysIndex=$((fnKeysIndex + 1))
     bindkey -s $fnKeys[$fnKeysIndex] "npm run $npmScript \n"
     pecho "\033]1337;SetKeyLabel=F$fnKeysIndex=$npmScript\a"
+  done
+
+  pecho "\033]1337;SetKeyLabel=F1=👈 back\a"
+  bindkey "${fnKeys[1]}" _displayDefault
+}
+
+function _displayYarnScripts() {
+  # find available yarn run scripts only if new directory
+  if [[ $lastPackageJsonPath != $(echo "$(pwd)/package.json") ]]; then
+    lastPackageJsonPath=$(echo "$(pwd)/package.json")
+    yarnScripts=($(node -e "console.log(JSON.parse($(yarn run --json).split('\n')[3]).data.items.filter(name => !name.includes(':')).sort((a, b) => a.localeCompare(b)).filter((name, idx) => idx < 12).join(' '))"))
+  fi
+
+  _clearTouchbar
+  _unbindTouchbar
+
+  touchBarState='yarn'
+
+  fnKeysIndex=1
+  for yarnScript in "$yarnScripts[@]"; do
+    fnKeysIndex=$((fnKeysIndex + 1))
+    bindkey -s $fnKeys[$fnKeysIndex] "yarn run $yarnScript \n"
+    pecho "\033]1337;SetKeyLabel=F$fnKeysIndex=$yarnScript\a"
   done
 
   pecho "\033]1337;SetKeyLabel=F1=👈 back\a"
@@ -195,11 +223,14 @@ function _displayBranches() {
 
 zle -N _displayDefault
 zle -N _displayNpmScripts
+zle -N _displayYarnScripts
 zle -N _displayBranches
 
 precmd_iterm_touchbar() {
   if [[ $touchBarState == 'npm' ]]; then
     _displayNpmScripts
+  elif [[ $touchBarState == 'yarn' ]]; then
+    _displayYarnScripts
   elif [[ $touchBarState == 'github' ]]; then
     _displayBranches
   else
