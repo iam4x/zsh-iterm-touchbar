@@ -72,6 +72,12 @@ GIT_UNPULLED="⇣"
 GIT_UNPUSHED="⇡"
 ```
 
+ENV variables to enable or disable yarn:
+
+```shell
+YARN_ENABLED=true
+```
+
 ### Read more / Credits
 
 * [Original iTerm2 issue for TouchBar support](https://gitlab.com/gnachman/iterm2/issues/5281)
