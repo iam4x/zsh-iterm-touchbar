@@ -6,6 +6,9 @@ GIT_STASHED="${GIT_STASHED:-$}"
 GIT_UNPULLED="${GIT_UNPULLED:-⇣}"
 GIT_UNPUSHED="${GIT_UNPUSHED:-⇡}"
 
+# YARN
+YARN_ENABLED=true
+
 # Output name of current branch.
 git_current_branch() {
   local ref
@@ -143,7 +146,7 @@ function _displayDefault() {
   # PACKAGE.JSON
   # ------------
   if [[ -f package.json ]]; then
-      if [[ -f yarn.lock ]]; then
+      if [[ -f yarn.lock ]] && [[ "$YARN_ENABLED" = true ]]; then
           pecho "\033]1337;SetKeyLabel=F5=🐱 yarn-run\a"
           bindkey "${fnKeys[5]}" _displayYarnScripts
       else
