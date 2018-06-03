@@ -100,6 +100,15 @@ function _unbindTouchbar() {
   done
 }
 
+function setKey(){
+  pecho "\033]1337;SetKeyLabel=F${1}=${2}\a"
+  if [ "$4" != "-q" ]; then
+    bindkey -s $fnKeys[$1] "$3 \n"
+  else
+    bindkey $fnKeys[$1] $3
+  fi
+}
+
 function _displayDefault() {
   _clearTouchbar
   _unbindTouchbar
@@ -133,27 +142,19 @@ function _displayDefault() {
 
     [ -n "${indicators}" ] && touchbarIndicators="🔥[${indicators}]" || touchbarIndicators="🙌";
 
-    pecho "\033]1337;SetKeyLabel=F2=🎋 $(git_current_branch)\a"
-    pecho "\033]1337;SetKeyLabel=F3=$touchbarIndicators\a"
-    pecho "\033]1337;SetKeyLabel=F4=🔼 push\a";
-    pecho "\033]1337;SetKeyLabel=F5=🔽 pull\a";
-
-    # bind git actions
-    bindkey '^[OQ' _displayBranches
-    bindkey -s '^[OR' 'git status \n'
-    bindkey -s '^[OS' "git push origin $(git_current_branch) \n"
-    bindkey -s '^[[15~' "git pull origin $(git_current_branch) \n"
+    setKey 2 "🎋 `git_current_branch`" _displayBranches '-q'
+    setKey 3 $touchbarIndicators "git status"
+    setKey 4 "🔼 push" "git push origin $(git_current_branch)"
+    setKey 5 "🔽 pull" "git pull origin $(git_current_branch)"
   fi
 
   # PACKAGE.JSON
   # ------------
   if [[ -f package.json ]]; then
       if [[ -f yarn.lock ]] && [[ "$YARN_ENABLED" = true ]]; then
-          pecho "\033]1337;SetKeyLabel=F5=🐱 yarn-run\a"
-          bindkey "${fnKeys[5]}" _displayYarnScripts
+          setKey 6 "🐱 yarn-run" _displayYarnScripts '-q'
       else
-          pecho "\033]1337;SetKeyLabel=F5=⚡️ npm-run\a"
-          bindkey "${fnKeys[5]}" _displayNpmScripts
+          setKey 6 "⚡️ npm-run" _displayNpmScripts '-q'
     fi
   fi
 }
@@ -173,12 +174,10 @@ function _displayNpmScripts() {
   fnKeysIndex=1
   for npmScript in "$npmScripts[@]"; do
     fnKeysIndex=$((fnKeysIndex + 1))
-    bindkey -s $fnKeys[$fnKeysIndex] "npm run $npmScript \n"
-    pecho "\033]1337;SetKeyLabel=F$fnKeysIndex=$npmScript\a"
+    setKey $fnKeysIndex $npmScript "npm run $npmScript"
   done
 
-  pecho "\033]1337;SetKeyLabel=F1=👈 back\a"
-  bindkey "${fnKeys[1]}" _displayDefault
+  setKey 1 "👈 back" _displayDefault '-q'
 }
 
 function _displayYarnScripts() {
@@ -196,12 +195,10 @@ function _displayYarnScripts() {
   fnKeysIndex=1
   for yarnScript in "$yarnScripts[@]"; do
     fnKeysIndex=$((fnKeysIndex + 1))
-    bindkey -s $fnKeys[$fnKeysIndex] "yarn run $yarnScript \n"
-    pecho "\033]1337;SetKeyLabel=F$fnKeysIndex=$yarnScript\a"
+    setKey $fnKeysIndex $yarnScript "yarn run $yarnScript"
   done
 
-  pecho "\033]1337;SetKeyLabel=F1=👈 back\a"
-  bindkey "${fnKeys[1]}" _displayDefault
+  setKey 1 "👈 back" _displayDefault '-q'
 }
 
 function _displayBranches() {
@@ -218,12 +215,10 @@ function _displayBranches() {
   # for each branch name, bind it to a key
   for branch in "$gitBranches[@]"; do
     fnKeysIndex=$((fnKeysIndex + 1))
-    bindkey -s $fnKeys[$fnKeysIndex] "git checkout $branch \n"
-    pecho "\033]1337;SetKeyLabel=F$fnKeysIndex=$branch\a"
+    setKey $fnKeysIndex $branch "git checkout $branch"
   done
 
-  pecho "\033]1337;SetKeyLabel=F1=👈 back\a"
-  bindkey "${fnKeys[1]}" _displayDefault
+  setKey 1 "👈 back" _displayDefault '-q'
 }
 
 zle -N _displayDefault
