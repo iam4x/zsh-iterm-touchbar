@@ -184,7 +184,7 @@ function _displayYarnScripts() {
   # find available yarn run scripts only if new directory
   if [[ $lastPackageJsonPath != $(echo "$(pwd)/package.json") ]]; then
     lastPackageJsonPath=$(echo "$(pwd)/package.json")
-    yarnScripts=($(node -e "console.log($(yarn run --json 2>&1 | sed '4!d').data.items.filter(name => !name.includes(':')).sort((a, b) => a.localeCompare(b)).filter((name, idx) => idx < 12).join(' '))"))
+    yarnScripts=($(node -e "console.log([$(yarn run --json 2>>/dev/null | tr '\n' ',')].find(line => line && line.type === 'list' && line.data && line.data.type === 'possibleCommands').data.items.filter(name => !name.includes(':')).sort((a, b) => a.localeCompare(b)).filter((name, idx) => idx < 12).join(' '))"))
   fi
 
   _clearTouchbar
