@@ -9,6 +9,15 @@ GIT_UNPUSHED="${GIT_UNPUSHED:-⇡}"
 # YARN
 YARN_ENABLED=true
 
+# https://unix.stackexchange.com/a/22215
+find-up () {
+  path=$(pwd)
+  while [[ "$path" != "" && ! -e "$path/$1" ]]; do
+    path=${path%/*}
+  done
+  echo "$path"
+}
+
 # Output name of current branch.
 git_current_branch() {
   local ref
@@ -151,8 +160,8 @@ function _displayDefault() {
 
   # PACKAGE.JSON
   # ------------
-  if [[ -f package.json ]]; then
-      if [[ -f yarn.lock ]] && [[ "$YARN_ENABLED" = true ]]; then
+  if [[ $(find-up package.json) != "" ]]; then
+      if [[ $(find-up yarn.lock) != "" ]] && [[ "$YARN_ENABLED" = true ]]; then
           setKey 6 "🐱 yarn-run" _displayYarnScripts '-q'
       else
           setKey 6 "⚡️ npm-run" _displayNpmScripts '-q'
@@ -162,8 +171,8 @@ function _displayDefault() {
 
 function _displayNpmScripts() {
   # find available npm run scripts only if new directory
-  if [[ $lastPackageJsonPath != $(echo "$(pwd)/package.json") ]]; then
-    lastPackageJsonPath=$(echo "$(pwd)/package.json")
+  if [[ $lastPackageJsonPath != $(find-up package.json) ]]; then
+    lastPackageJsonPath=$(find-up package.json)
     npmScripts=($(node -e "console.log(Object.keys($(npm run --json)).sort((a, b) => a.localeCompare(b)).filter((name, idx) => idx < 19).join(' '))"))
   fi
 
@@ -183,8 +192,8 @@ function _displayNpmScripts() {
 
 function _displayYarnScripts() {
   # find available yarn run scripts only if new directory
-  if [[ $lastPackageJsonPath != $(echo "$(pwd)/package.json") ]]; then
-    lastPackageJsonPath=$(echo "$(pwd)/package.json")
+  if [[ $lastPackageJsonPath != $(find-up package.json) ]]; then
+    lastPackageJsonPath=$(find-up package.json)
     yarnScripts=($(node -e "console.log([$(yarn run --json 2>>/dev/null | tr '\n' ',')].find(line => line && line.type === 'list' && line.data && line.data.type === 'possibleCommands').data.items.sort((a, b) => a.localeCompare(b)).filter((name, idx) => idx < 19).join(' '))"))
   fi
 
