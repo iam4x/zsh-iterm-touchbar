@@ -127,8 +127,7 @@ function _displayDefault() {
 
   # CURRENT_DIR
   # -----------
-  pecho "\033]1337;SetKeyLabel=F1=👉 $(echo $(pwd) | awk -F/ '{print $(NF-1)"/"$(NF)}')\a"
-  bindkey -s '^[OP' 'pwd \n'
+  setKey 1 "👉 $(echo $PWD | awk -F/ '{print $(NF-1)"/"$(NF)}')" _displayPath '-q'
 
   # GIT
   # ---
@@ -231,10 +230,26 @@ function _displayBranches() {
   setKey 1 "👈 back" _displayDefault '-q'
 }
 
+function _displayPath() {
+  _clearTouchbar
+  _unbindTouchbar
+  touchBarState='path'
+
+  IFS="/" read -rA directories <<< "$PWD"
+  fnKeysIndex=2
+  for dir in "${directories[@]:1}"; do
+    setKey $fnKeysIndex "$dir" "cd $(pwd | cut -d'/' -f-$fnKeysIndex)"
+    fnKeysIndex=$((fnKeysIndex + 1))
+  done
+
+  setKey 1 "👈 back" _displayDefault '-q'
+}
+
 zle -N _displayDefault
 zle -N _displayNpmScripts
 zle -N _displayYarnScripts
 zle -N _displayBranches
+zle -N _displayPath
 
 precmd_iterm_touchbar() {
   if [[ $touchBarState == 'npm' ]]; then
@@ -243,6 +258,8 @@ precmd_iterm_touchbar() {
     _displayYarnScripts
   elif [[ $touchBarState == 'github' ]]; then
     _displayBranches
+  elif [[ $touchBarState == 'path' ]]; then
+    _displayPath
   else
     _displayDefault
   fi
