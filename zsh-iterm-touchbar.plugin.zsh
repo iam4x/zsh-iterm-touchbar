@@ -11,7 +11,7 @@ YARN_ENABLED=true
 
 # https://unix.stackexchange.com/a/22215
 find-up () {
-  path=$(pwd)
+  path=$PWD
   while [[ "$path" != "" && ! -e "$path/$1" ]]; do
     path=${path%/*}
   done
@@ -84,8 +84,7 @@ git_unpushed_unpulled() {
 }
 
 pecho() {
-  if [ -n "$TMUX" ]
-  then
+  if [ -n "$TMUX" ]; then
     echo -ne "\ePtmux;\e$*\e\\"
   else
     echo -ne $*
@@ -119,11 +118,16 @@ function setKey(){
   fi
 }
 
-function _displayDefault() {
-  _clearTouchbar
-  _unbindTouchbar
+function clearKey(){
+  pecho "\033]1337;SetKeyLabel=F${1}=F${1}\a"
+}
 
-  touchBarState=''
+function _displayDefault() {
+  if [[ $touchBarState != "" ]]; then
+    _clearTouchbar
+  fi
+  _unbindTouchbar
+  touchBarState=""
 
   # CURRENT_DIR
   # -----------
@@ -132,11 +136,8 @@ function _displayDefault() {
 
   # GIT
   # ---
-  # Check if the current directory is in a Git repository.
-  command git rev-parse --is-inside-work-tree &>/dev/null || return
-
-  # Check if the current directory is in .git before running git checks.
-  if [[ "$(git rev-parse --is-inside-git-dir 2> /dev/null)" == 'false' ]]; then
+  # Check if the current directory is a git repository and not the .git directory
+  if git rev-parse --is-inside-work-tree &>/dev/null && [[ "$(git rev-parse --is-inside-git-dir 2> /dev/null)" == 'false' ]]; then
 
     # Ensure the index is up to date.
     git update-index --really-refresh -q &>/dev/null
@@ -156,6 +157,11 @@ function _displayDefault() {
     setKey 3 $touchbarIndicators "git status"
     setKey 4 "🔼 push" "git push origin $(git_current_branch)"
     setKey 5 "🔽 pull" "git pull origin $(git_current_branch)"
+  else
+    clearKey 2
+    clearKey 3
+    clearKey 4
+    clearKey 5
   fi
 
   # PACKAGE.JSON
@@ -166,6 +172,8 @@ function _displayDefault() {
       else
           setKey 6 "⚡️ npm-run" _displayNpmScripts '-q'
     fi
+  else
+      clearKey 6
   fi
 }
 
