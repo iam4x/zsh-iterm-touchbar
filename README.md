@@ -61,6 +61,11 @@ zgen load iam4x/zsh-iterm-touchbar
 
 ### Customize
 
+ENV variables to enable or disable git:
+
+```shell
+TOUCHBAR_GIT_ENABLED=true
+```
 ENV variables for git icons:
 
 ```shell

@@ -8,6 +8,7 @@ GIT_UNPUSHED="${GIT_UNPUSHED:-⇡}"
 
 # YARN
 YARN_ENABLED=true
+TOUCHBAR_GIT_ENABLED=true
 
 # https://unix.stackexchange.com/a/22215
 find-up () {
@@ -136,7 +137,9 @@ function _displayDefault() {
   # GIT
   # ---
   # Check if the current directory is a git repository and not the .git directory
-  if git rev-parse --is-inside-work-tree &>/dev/null && [[ "$(git rev-parse --is-inside-git-dir 2> /dev/null)" == 'false' ]]; then
+  if [[ "$TOUCHBAR_GIT_ENABLED" = true ]] &&
+    git rev-parse --is-inside-work-tree &>/dev/null &&
+    [[ "$(git rev-parse --is-inside-git-dir 2> /dev/null)" == 'false' ]]; then
 
     # Ensure the index is up to date.
     git update-index --really-refresh -q &>/dev/null
