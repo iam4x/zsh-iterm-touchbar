@@ -25,6 +25,7 @@ Currently it shows:
 * iTerm2 3.1.beta.3 (OS 10.10+) - [Download](https://www.iterm2.com/downloads.html)
 * [zsh](http://www.zsh.org/) shell
 * a zsh-framework like [antigen](http://antigen.sharats.me/) or [zgen](https://github.com/tarjoilija/zgen)
+* node (`brew install node`)
 
 **Into iterm2:** Go into `View -> Customize Tool Bar...` and drag & drop the `Fn` module
 
