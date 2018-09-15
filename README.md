@@ -19,6 +19,7 @@ Currently it shows:
     * `⇡` — unpushed commits.
   * F4 - Push to origin branch (git push origin [branch]) ✉️
   * F5 - Display `npm-run` or `yarn-run` scripts from `package.json` ⚡️ /🐱
+  * F6 - Display `rails` common tasks
 
 ### Requirements
 
@@ -82,6 +83,14 @@ ENV variables to enable or disable yarn:
 
 ```shell
 YARN_ENABLED=true
+```
+
+#### Rails commands customization
+By default, two commands are enabled: `rails server` and `rails console`.
+
+You can set your custom commands setting `TOUCHBAR_RAILS_COMMAND` env:
+```
+TOUCHBAR_RAILS_COMMANDS=("bundle install", "rails db:migrate", "rails console")
 ```
 
 ### Read more / Credits
