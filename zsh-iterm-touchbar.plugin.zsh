@@ -9,6 +9,7 @@ GIT_UNPUSHED="${GIT_UNPUSHED:-⇡}"
 # YARN
 YARN_ENABLED=true
 TOUCHBAR_GIT_ENABLED=true
+TOUCHBAR_RAILS_ENABLED=true
 
 # https://unix.stackexchange.com/a/22215
 find-up () {
@@ -177,6 +178,12 @@ function _displayDefault() {
   else
       clearKey 6
   fi
+
+  # Rails
+  # -----
+  if [[ $(find-up Gemfile) != "" ]]; then
+    setKey 7 "💎 rails" _displayRailsScripts '-q'
+  fi
 }
 
 function _displayNpmScripts() {
@@ -221,6 +228,27 @@ function _displayYarnScripts() {
   setKey 1 "👈 back" _displayDefault '-q'
 }
 
+function _displayRailsScripts() {
+  if [[ $TOUCHBAR_RAILS_COMMANDS == "" ]]; then
+    railsScripts=("rails server" "rails console")
+  else
+    railsScripts=$TOUCHBAR_RAILS_COMMANDS
+  fi
+
+  _clearTouchbar
+  _unbindTouchbar
+
+  touchBarState='rails'
+
+  fnKeysIndex=1
+  for railsScript in "$railsScripts[@]"; do
+    fnKeysIndex=$((fnKeysIndex + 1))
+    setKey $fnKeysIndex $railsScript $railsScript
+  done
+
+  setKey 1 "👈 back" _displayDefault '-q'
+}
+
 function _displayBranches() {
   # List of branches for current repo
   gitBranches=($(node -e "console.log('$(echo $(git branch))'.split(/[ ,]+/).toString().split(',').join(' ').toString().replace('* ', ''))"))
@@ -259,6 +287,7 @@ function _displayPath() {
 zle -N _displayDefault
 zle -N _displayNpmScripts
 zle -N _displayYarnScripts
+zle -N _displayRailsScripts
 zle -N _displayBranches
 zle -N _displayPath
 
@@ -267,6 +296,8 @@ precmd_iterm_touchbar() {
     _displayNpmScripts
   elif [[ $touchBarState == 'yarn' ]]; then
     _displayYarnScripts
+  elif [[ $touchBarState == 'rails' ]]; then
+    _displayRailsScripts
   elif [[ $touchBarState == 'github' ]]; then
     _displayBranches
   elif [[ $touchBarState == 'path' ]]; then
