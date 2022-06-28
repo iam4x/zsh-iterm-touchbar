@@ -52,6 +52,12 @@ Add the following snippet `~/.zshrc` after the line antigen use oh-my-zsh:
 antigen theme https://github.com/iam4x/zsh-iterm-touchbar
 ```
 
+### For Fig users
+
+Install `zsh-iterm-touchbar` with [Fig](https://fig.io) in just one click.
+
+<a href="https://fig.io/plugins/other/zsh-iterm-touchbar_iam4x" target="_blank"><img src="https://fig.io/badges/install-with-fig.svg" /></a>
+
 #### For Zgen users
 
 Add the following line to your `~/.zshrc` where you're adding your other zsh plugins:
